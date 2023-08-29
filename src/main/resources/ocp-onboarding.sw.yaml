@@ -7,24 +7,43 @@ annotations:
 version: 0.0.1
 timeouts:
   workflowExecTimeout: PT24H
-start: GetJiraIssue
+start: CreateJiraIssue
 dataInputSchema: ocpob-schema.json
 functions:
-- name: getJiraIssue
-  operation: specs/jira.yml#getIssue
-- name: createJiraIssue
-  operation: rest:post:https://issues.redhat.com:443/
+  - name: getJiraIssue
+    operation: specs/jira.yml#getIssue
+  - name: createJiraIssue
+    operation: specs/jira.yml#createIssue
 states:
-- name: GetJiraIssue
-  type: operation
-  actions:
-  - functionRef:
-      refName: getJiraIssue
-      arguments:
-        issueIdOrKey: KAN-4
-        fields: status
-    actionDataFilter:
-      toStateData: .jiraIssue
-  stateDataFilter:
-    output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
-  end: true
+  - name: CreateJiraIssue
+    type: operation
+    actions:
+      - functionRef:
+          refName: createJiraIssue
+          arguments:
+            update: {}
+            fields:
+              summary: "Create an OpenShift namespace by name .namespace for developer"
+              issuetype:
+                id: "10001"
+              project:
+                id: "10000"
+        actionDataFilter:
+          toStateData: .jiraIssue
+    stateDataFilter:
+      output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
+    transition: GetJiraIssue
+
+  - name: GetJiraIssue
+    type: operation
+    actions:
+      - functionRef:
+          refName: getJiraIssue
+          arguments:
+            issueIdOrKey: .jiraIssue.key
+            fields: status
+        actionDataFilter:
+          toStateData: .jiraIssue
+    stateDataFilter:
+      output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
+    end: true
