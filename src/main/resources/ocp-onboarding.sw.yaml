@@ -1,0 +1,30 @@
+---
+specVersion: 0.8
+id: ocpob
+name: Onboarding to OCP
+annotations:
+  - "workflow-type/infrastructure"
+version: 0.0.1
+timeouts:
+  workflowExecTimeout: PT24H
+start: GetJiraIssue
+dataInputSchema: ocpob-schema.json
+functions:
+- name: getJiraIssue
+  operation: specs/jira.yml#getIssue
+- name: createJiraIssue
+  operation: rest:post:https://issues.redhat.com:443/
+states:
+- name: GetJiraIssue
+  type: operation
+  actions:
+  - functionRef:
+      refName: getJiraIssue
+      arguments:
+        issueIdOrKey: KAN-4
+        fields: status
+    actionDataFilter:
+      toStateData: .jiraIssue
+  stateDataFilter:
+    output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
+  end: true
