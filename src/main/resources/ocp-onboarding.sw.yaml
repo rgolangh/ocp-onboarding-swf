@@ -7,43 +7,61 @@ annotations:
 version: 0.0.1
 timeouts:
   workflowExecTimeout: PT24H
-start: CreateJiraIssue
+start: CreateK8sNamespace
 dataInputSchema: ocpob-schema.json
 functions:
   - name: getJiraIssue
     operation: specs/jira.yml#getIssue
   - name: createJiraIssue
     operation: specs/jira.yml#createIssue
-states:
-  - name: CreateJiraIssue
-    type: operation
-    actions:
-      - functionRef:
-          refName: createJiraIssue
-          arguments:
-            update: {}
-            fields:
-              summary: "Create an OpenShift namespace by name .namespace for developer"
-              issuetype:
-                id: "10001"
-              project:
-                id: "10000"
-        actionDataFilter:
-          toStateData: .jiraIssue
-    stateDataFilter:
-      output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
-    transition: GetJiraIssue
+  - name: createK8sNamespace
+    operation: specs/kube.yaml#createCoreV1Namespace
 
-  - name: GetJiraIssue
+states:
+  - name: CreateK8sNamespace
     type: operation
     actions:
       - functionRef:
-          refName: getJiraIssue
+          refName: createK8sNamespace
           arguments:
-            issueIdOrKey: .jiraIssue.key
-            fields: status
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: ".namespace"
         actionDataFilter:
-          toStateData: .jiraIssue
+          toStateData: .createdNamespace
     stateDataFilter:
-      output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
+      output: "{createdNamespace: .createdNamespace}"
     end: true
+#  - name: CreateJiraIssue
+#    type: operation
+#    actions:
+#      - functionRef:
+#          refName: createJiraIssue
+#          arguments:
+#            update: {}
+#            fields:
+#              summary: "Create an OpenShift namespace by name .namespace for developer"
+#              issuetype:
+#                id: "10001"
+#              project:
+#                id: "10000"
+#        actionDataFilter:
+#          toStateData: .jiraIssue
+#    stateDataFilter:
+#      output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
+#    transition: GetJiraIssue
+#
+#  - name: GetJiraIssue
+#    type: operation
+#    actions:
+#      - functionRef:
+#          refName: getJiraIssue
+#          arguments:
+#            issueIdOrKey: .jiraIssue.key
+#            fields: status
+#        actionDataFilter:
+#          toStateData: .jiraIssue
+#    stateDataFilter:
+#      output: "{jiraIssue: .jiraIssue, status: .jiraIssue.fields.status.name}"
+#    end: true
