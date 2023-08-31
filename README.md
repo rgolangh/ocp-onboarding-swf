@@ -1,4 +1,4 @@
-# MTA analysis using Sonata Serverless Workflow
+# OCP Onboarding workflow using Sonata Serverless Workflow
 
 ## Description
 
@@ -23,10 +23,23 @@ This is an OCP onboarding flow to create namespace by a Jira request.
 - k8 openapi v2 client in specs/k8s.json and token
 
 ### Working with yor Jira and K8s instances:
-- Get your Jira api key from ?
-- Set the key under ?
+- Get your Jira api key from ? Go to your Jira profile -> Security -> Manage API tokens -> create
+- Set the key under a `.env` file in the root of the project (obviously not kept in this git repo)
+```
+QUARKUS_REST_CLIENT_TRUST_STORE=/etc/pki/ca-trust/extracted/java/cacerts
+QUARKUS_REST_CLIENT_TRUST_STORE_PASSWORD=changeit
 
-- Set the k8s url value in the configMap ? 
+QUARKUS_REST_CLIENT_JIRA_YML_URL=https://your-jira-url:443
+QUARKUS_OPENAPI_GENERATOR_JIRA_YML_AUTH_BASICAUTH_USERNAME=your-jira-username
+QUARKUS_OPENAPI_GENERATOR_JIRA_YML_AUTH_BASICAUTH_PASSWORD=your-jira-token
+
+QUARKUS_REST_CLIENT_KUBE_YAML_URL=https://your-k8s-fqdn:port
+QUARKUS_OPENAPI_GENERATOR_KUBE_YAML_AUTH_BEARERTOKEN_BEARER_TOKEN=your-k8s-token
+
+```
+  
+
+- If you want to deploy using a CR use this [WIP] 
 ```
 apiVersion: v1
 kind: ConfigMap
@@ -39,7 +52,6 @@ data:
     quarkus.rest-client.k8s.json.url={K8S Api server Url (run `kubectl config  view --minify -o jsonpath={.clusters[0].cluster.server}` }
 
 ```
-- Set the k8s opnapi oAuth token ?
 
 
 
@@ -70,12 +82,6 @@ mvn clean package
 java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-or on Windows
-
-```sh
-mvn clean package
-java -jar target\quarkus-app\quarkus-run.jar
-```
 
 ### Compile and Run using Local Native Image
 Note that this requires GRAALVM_HOME to point to a valid GraalVM installation
@@ -90,23 +96,10 @@ To run the generated native executable, generated in `target/`, execute
 ./target/sw-quarkus-greeting-{version}-runner
 ```
 
-### Submit a request
-
-To invoke an MTA analysis using this workflow make sure you have an MTA service running.
-Specify the endpoint in workflow spec under the function section `src/main/resources/mta.sw.yaml`
-
-```yaml
-// showing only the functions section
-functions:
-- name: getApplication
-  type: custom
-  operation: rest:get:https://mta.example.org:443/hub/applications
-```
-
-Execute the flow using curl with this payload:
+### Execute the flow using curl
 
 ```sh
-curl -XPOST -H "Content-Type: application/json" http://localhost:8080/MTAAnalysis -d '{"repositoryURL": "https://github.com/your/repo"}'
+curl -XPOST -H "Content-Type: application/json" http://localhost:8080/ocpob -d '{"namespace": "my-new-namespace"}'
 ```
 
 
