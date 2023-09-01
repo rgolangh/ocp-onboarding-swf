@@ -40,6 +40,7 @@ This is an OCP onboarding flow to create namespace by a Jira request.
 
 - Set the keys and values under an `.env` file in the root of the project (obviously not kept in this git repo)
 ```console
+# Pre-step: add your k8s CA into your system ca pool and regenerate with update-ca-trust
 QUARKUS_REST_CLIENT_TRUST_STORE=/etc/pki/ca-trust/extracted/java/cacerts
 QUARKUS_REST_CLIENT_TRUST_STORE_PASSWORD=changeit
 
@@ -49,9 +50,7 @@ QUARKUS_OPENAPI_GENERATOR_JIRA_YML_AUTH_BASICAUTH_PASSWORD=your-jira-token
 
 QUARKUS_REST_CLIENT_KUBE_YAML_URL=https://your-k8s-fqdn:port
 QUARKUS_OPENAPI_GENERATOR_KUBE_YAML_AUTH_BEARERTOKEN_BEARER_TOKEN=your-k8s-token
-
 ```
-  
 
 - If you want to deploy using a CR use this [WIP] 
 ```
