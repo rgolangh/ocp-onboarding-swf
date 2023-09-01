@@ -7,9 +7,9 @@ This is an OCP onboarding flow to create namespace by a Jira request.
 ![SWF VIZ](https://raw.githubusercontent.com/ederign/ocp-onboarding-swf/patch-1/src/main/resources/ocp-onboarding.svg)
 
 
-## Clients involved:
-- Jira REST client with the oAuth token
-- k8 openapi v2 client in specs/k8s.json and token
+## Generated clients involved:
+- Jira with bearer token, see `src/main/resources/specs/jira.yml`
+- k8 with bearer token, `src/main/resources/specs/k8s.yaml` 
 
 ### Working with yor Jira and K8s instances:
 - Get your Jira api key from ? Go to your Jira profile -> Security -> Manage API tokens -> create
