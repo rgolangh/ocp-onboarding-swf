@@ -12,9 +12,34 @@ This is an OCP onboarding flow to create namespace by a Jira request.
 - k8 with bearer token, [specs/kube.yaml](src/main/resources/specs/kube.yaml)
 
 ### Working with yor Jira and K8s instances:
-- Get your Jira api key from ? Go to your Jira profile -> Security -> Manage API tokens -> create
-- Set the key under a `.env` file in the root of the project (obviously not kept in this git repo)
-```
+- Jira:
+  - go to your Jira profile -> Security -> Manage API tokens -> create
+- K8s:
+  - create a service account and set its rbac:
+    ```sh
+      kubectl create sa sonata-bot
+      kubectl create clusterrole ns-creator --resource=namespace --verb=get,list,create
+      ubectl create clusterrolebinding sonata-bot-ns-creator --clusterrole=ns-creator --user=sonata-bot
+    ```
+  - create a long-lived token using a secret for a service account:
+    ```sh
+      kubectl apply -f - <<EOF
+      apiVersion: v1
+      kind: Secret
+      metadata:
+      name: sonataflow-bot
+      annotations:
+      kubernetes.io/service-account.name: sonata-bot
+      type: kubernetes.io/service-account-token
+      EOF
+    ```
+  - get the token and set it later as the bearer token
+    ```sh
+      kubectl get secret sonataflow-bot -o jsonpath={".data.token"} | base64 -d
+    ```
+
+- Set the keys and values under an `.env` file in the root of the project (obviously not kept in this git repo)
+```console
 QUARKUS_REST_CLIENT_TRUST_STORE=/etc/pki/ca-trust/extracted/java/cacerts
 QUARKUS_REST_CLIENT_TRUST_STORE_PASSWORD=changeit
 
@@ -43,7 +68,6 @@ data:
 ```
 
 
-
 ## Installing and Running
 
 ### Prerequisites
@@ -53,36 +77,10 @@ You will need:
   - Environment variable JAVA_HOME set accordingly
   - Maven 3.8.1+ installed
 
-When using native image compilation, you will also need: 
-  - [GraalVm](https://www.graalvm.org/downloads/) 20.2.0+ installed
-  - Environment variable GRAALVM_HOME set accordingly
-  - Note that GraalVM native image compilation typically requires other packages (glibc-devel, zlib-devel and gcc) to be installed too.  You also need 'native-image' installed in GraalVM (using 'gu install native-image'). Please refer to [GraalVM installation documentation](https://www.graalvm.org/docs/reference-manual/aot-compilation/#prerequisites) for more details.
-
 ### Compile and Run in Local Dev Mode
 
 ```sh
 mvn clean package quarkus:dev
-```
-
-### Compile and Run in JVM mode
-
-```sh
-mvn clean package 
-java -jar target/quarkus-app/quarkus-run.jar
-```
-
-
-### Compile and Run using Local Native Image
-Note that this requires GRAALVM_HOME to point to a valid GraalVM installation
-
-```sh
-mvn clean package -Pnative
-```
-  
-To run the generated native executable, generated in `target/`, execute
-
-```sh
-./target/sw-quarkus-greeting-{version}-runner
 ```
 
 ### Execute the flow using curl
@@ -90,7 +88,6 @@ To run the generated native executable, generated in `target/`, execute
 ```sh
 curl -XPOST -H "Content-Type: application/json" http://localhost:8080/ocpob -d '{"namespace": "my-new-namespace"}'
 ```
-
 
 ## Deploying with Kogito Operator
 
