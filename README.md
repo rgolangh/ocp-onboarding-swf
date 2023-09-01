@@ -17,9 +17,9 @@ This is an OCP onboarding flow to create namespace by a Jira request.
 - K8s:
   - create a service account and set its rbac:
     ```sh
-      kubectl create sa sonata-bot
+      kubectl create sa sonataflow-bot
       kubectl create clusterrole ns-creator --resource=namespace --verb=get,list,create
-      ubectl create clusterrolebinding sonata-bot-ns-creator --clusterrole=ns-creator --user=sonata-bot
+      kubectl create clusterrolebinding sonataflow-bot-ns-creator --clusterrole=ns-creator --user=sonataflow-bot
     ```
   - create a long-lived token using a secret for a service account:
     ```sh
