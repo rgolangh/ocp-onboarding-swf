@@ -26,7 +26,7 @@ states:
           arguments:
             update: {}
             fields:
-              summary: "Create an OpenShift namespace by name .namespace for developer"
+              summary: '"Request For New Namespace: " + .namespace'
               issuetype:
                 id: "10001"
               project:
