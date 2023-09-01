@@ -4,18 +4,7 @@
 
 This is an OCP onboarding flow to create namespace by a Jira request.
 
-          Start
-            |
-    Create Jira Ticket for new NS
-            |
-        "Is Ticket Done"?
-            |
-    |                       |
-    Yes                     NO
-    |                       |
-    Create NS               sleep & goto "Is Ticket Done"
-    |
-    End         
+![SWF VIZ](https://raw.githubusercontent.com/ederign/ocp-onboarding-swf/patch-1/src/main/resources/ocp-onboarding.svg)
 
 
 ## Clients involved:
