@@ -9,7 +9,7 @@ This is an OCP onboarding flow to create namespace by a Jira request.
 
 ## Generated clients involved:
 - Jira with bearer token, see [specs/jira.yml](src/main/resources/specs/jira.yml)
-- k8 with bearer token, [specs/k8s.yaml](src/main/resources/specs/k8s.yaml)
+- k8 with bearer token, [specs/k8s.yaml](src/main/resources/specs/kube.yaml)
 
 ### Working with yor Jira and K8s instances:
 - Get your Jira api key from ? Go to your Jira profile -> Security -> Manage API tokens -> create
