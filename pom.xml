@@ -14,7 +14,8 @@
     <quarkus-plugin.version>2.16.4.Final</quarkus-plugin.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>2.16.4.Final</quarkus.platform.version>
+    <!-- <quarkus.platform.version>2.16.4.Final</quarkus.platform.version> -->
+    <quarkus.platform.version>999-SNAPSHOT</quarkus.platform.version>
     <tests.quarkus.http.port>8080</tests.quarkus.http.port>
     <version.com.github.tomakehurst.wiremock>2.33.2</version.com.github.tomakehurst.wiremock>
     <version.compiler.plugin>3.8.1</version.compiler.plugin>
@@ -137,6 +138,11 @@
       <id>jboss nexus</id>
       <name>jboss nexus</name>
       <url>https://repository.jboss.org/nexus/content/repositories/snapshots</url>
+    </repository>
+    <repository>
+      <id>Quarkus nexus</id>
+      <name>Quarkus nexus</name>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </repositories>
   <build>
